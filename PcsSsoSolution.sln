@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "WebUI\WebUI.csproj", "{DCB4E3D2-80B1-401A-8472-CAD59984F0A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{DDA96E70-B005-4B80-82C3-264CAEDBD924}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{3D63B727-7784-4909-AA58-94A43BCA34F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{95F7B9F9-FF4F-4F2E-AA8D-978DC3D75B69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCB4E3D2-80B1-401A-8472-CAD59984F0A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCB4E3D2-80B1-401A-8472-CAD59984F0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCB4E3D2-80B1-401A-8472-CAD59984F0A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCB4E3D2-80B1-401A-8472-CAD59984F0A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDA96E70-B005-4B80-82C3-264CAEDBD924}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDA96E70-B005-4B80-82C3-264CAEDBD924}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDA96E70-B005-4B80-82C3-264CAEDBD924}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDA96E70-B005-4B80-82C3-264CAEDBD924}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D63B727-7784-4909-AA58-94A43BCA34F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D63B727-7784-4909-AA58-94A43BCA34F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D63B727-7784-4909-AA58-94A43BCA34F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D63B727-7784-4909-AA58-94A43BCA34F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95F7B9F9-FF4F-4F2E-AA8D-978DC3D75B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95F7B9F9-FF4F-4F2E-AA8D-978DC3D75B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95F7B9F9-FF4F-4F2E-AA8D-978DC3D75B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95F7B9F9-FF4F-4F2E-AA8D-978DC3D75B69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0391AB9D-966E-4FFB-AAE7-96D3E4610091}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://visualmarks.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = BusinessLayer\\BusinessLayer.csproj
+		SccProjectName1 = BusinessLayer
+		SccLocalPath1 = BusinessLayer
+		SccProjectUniqueName2 = Data\\Data.csproj
+		SccProjectName2 = Data
+		SccLocalPath2 = Data
+		SccProjectUniqueName3 = Domain\\Domain.csproj
+		SccProjectName3 = Domain
+		SccLocalPath3 = Domain
+		SccProjectUniqueName4 = WebUI\\WebUI.csproj
+		SccProjectName4 = WebUI
+		SccLocalPath4 = WebUI
+	EndGlobalSection
+EndGlobal

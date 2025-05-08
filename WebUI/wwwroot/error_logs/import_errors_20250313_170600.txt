@@ -1,0 +1,6 @@
+Import Errors - 13-03-2025 5:06:00 PM
+Source File: UserImportTemplate (1).xlsx
+----------------------------------------
+
+Row 4: User with email 'rachna@aditiitsolutions.com' already exists
+Row 5: User with email 'aditimobiledeveloper@gmail.com' already exists

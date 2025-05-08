@@ -1,0 +1,39 @@
+﻿<style>
+
+    .error-section {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #e74c3c;
+        background-color: #f8d7da;
+        color: #721c24;
+        border-radius: 5px;
+        align-self: center;
+    }
+
+        .error-section ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .error-section li {
+            list-style: none;
+        }
+</style>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger error-section align-content-center" role="alert">
+
+        <p>@ViewData["ErrorMessage"]</p>
+
+    </div>
+}
+
+@* @if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger error-section align-content-center" role="alert">
+
+        <p>@TempData["ErrorMessage"]</p>
+
+    </div>
+} *@

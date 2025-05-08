@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebUI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebUI.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <!-- Syncfusion ASP.NET Core controls styles -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/27.2.2/fluent.css" />
+    <!-- Syncfusion ASP.NET Core controls scripts -->
+    <script src="https://cdn.syncfusion.com/ej2/27.2.2/dist/ej2.min.js"></script>
+    <script src="~/js/gridcustomization.js"></script>
+    <link rel="icon" type="image/x-icon" href="/images/fevicon.ico">
+
+</head>
+<body>
+    @using Domain.Model
+    @using Microsoft.AspNetCore.Identity
+    @inject SignInManager<ApplicationUser> SignInManager
+    @inject UserManager<ApplicationUser> UserManager
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow ">
+            <div class="container-fluid">
+                @{
+                    var loggedInUSer = await UserManager.GetUserAsync(User);
+                }
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    @if (User.IsInRole("SuperAdmin") && loggedInUSer.IsActive)
+                    {
+                        <a class="nav-link" asp-area="" asp-controller="SuperAdmin" asp-action="Index">Dashboard</a>                     
+                    }
+                    @if (User.IsInRole("Admin") && loggedInUSer.IsActive)
+                    {
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>                      
+                    }
+                    @if (User.IsInRole("User") && loggedInUSer.IsActive)
+                    {
+                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">Dashboard</a>
+                    }
+                }
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @*   <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li> *@
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @* @await Html.PartialAsync("_ErrorPartial", TempData["ErrorMessage"] as string) *@
+            @* <partial name="_ErrorPartial" /> *@
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <ejs-scripts></ejs-scripts>
+    @await Component.InvokeAsync("NToastNotify")
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+<style>
+    .e-excelfilter .e-searchbox {
+        display: none;
+    }
+</style>

@@ -1,0 +1,46 @@
+﻿@using BusinessLayer
+@using Domain.Model
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+
+    var loggedInUSer = await UserManager.GetUserAsync(User);
+
+}
+
+@if (SignInManager.IsSignedIn(User) && loggedInUSer.IsActive)
+{
+
+    <div class="container mt-5 w-50">
+        @if (loggedInUSer.IdProvider == Common.LocalAccount)
+        {
+            <a asp-controller="Access" asp-action="ResetPassword"
+               asp-route-provider="AzureAd"
+               class="btn loginbutton">
+                Reset Password
+            </a>
+        }
+
+
+        <h1 class="mb-4 display-4 text-center">User Information</h1>
+        <div class="mb-3">
+            <label for="fName" class="form-label e-headertext">First Name</label>
+            <input type="text" id="fName" class="form-control" value="@loggedInUSer.FirstName" readonly />
+        </div>
+        <div class="mb-3">
+            <label for="lName" class="form-label e-headertext">Last Name</label>
+            <input type="text" id="lName" class="form-control" value="@loggedInUSer.LastName" readonly />
+        </div>
+        <div class="mb-3">
+            <label for="emailId" class="form-label e-headertext">Email ID</label>
+            <input type="email" id="emailId" class="form-control" value="@loggedInUSer.UserName" readonly />
+        </div>
+        <div class="mb-3">
+            <label for="authProvider" class="form-label e-headertext">Authentication Provider</label>
+            <input type="text" id="authProvider" class="form-control" value="@loggedInUSer.IdProvider" readonly />
+        </div>
+
+    </div>
+
+}

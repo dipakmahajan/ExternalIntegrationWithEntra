@@ -1,0 +1,54 @@
+﻿@* <h3>SuperAdmin Sign-Up</h3> *@
+
+@if (ViewData.Keys.Contains("message"))
+{
+    <p style="color: red">
+        @ViewData["message"]
+    </p>
+}
+
+<div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+    <div class="d-flex flex-row justify-content-center">
+        <div class="mx-3 d-flex flex-column align-items-center loginbuttonborder" style="padding: 20px;">
+            <div class="form-group mb-3 ">
+                <h3 for="textArea1">Sign-Up as Super Admin using Google, Microsoft, or email accounts</h3>
+
+            </div>
+            <a asp-action="ExternalLogin" asp-area="MicrosoftIdentity/Account/SignIn"
+               asp-route-provider="AzureAdB2C"
+               asp-route-role="SuperAdmin"
+               class="btn loginbuttonborder mx-1 accountbutton"
+               title="Sign-Up as Super Admin using Google, Microsoft, or email accounts">
+                <img src="~/images/goggle.png" width="60" /> <img src="~/images/mic.png" width="60" /> <img src="~/images/mail.png" width="60" />
+                <h5>Super Admin Sign-Up</h5>
+            </a>
+
+        </div>
+
+        <div class="mx-3 d-flex flex-column align-items-center loginbuttonborder" style="padding: 20px;">
+            <div class="form-group mb-3">
+                <h3 for="textArea2">Sign-Up as Super Admin using your organization's Office365 account</h3>
+            </div>
+            <a asp-action="ExternalLogin" asp-area="MicrosoftIdentity/Account/SignIn"
+               asp-route-provider="AzureAd"
+               asp-route-role="SuperAdmin"
+               class="btn loginbuttonborder accountbutton"
+               title="Sign-Up as Super Admin using your organization's Office365 account">
+                <img src="~/images/microsoft.png" width="60" />
+                <h5>Super Admin Office365 Sign-Up</h5>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+@* <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn" class="btn btn-primary">Sign Up/In</a> *@
+
+@* 
+<ul class="nav navbar-nav navbar-right">
+    <li class="navbar-btn">
+        <form method="get" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">
+            <button type="submit" class="btn btn-primary">(AD B2C)Sign Up/In</button>
+        </form>      
+    </li>
+</ul> *@
