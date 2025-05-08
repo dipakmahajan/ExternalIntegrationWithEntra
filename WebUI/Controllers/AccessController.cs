@@ -56,8 +56,10 @@ namespace WebUI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string? message = null)
+        public IActionResult Login(string returnUrl = "/", string? message = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (message is not null)
             {
                 ViewData["message"] = message;
@@ -96,6 +98,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public ChallengeResult ExternalLogin(string provider, string? returnURL = null, string? role = null)
         {
+            _logger.LogInformation("Initiating external login with provider: {Provider}, returnURL: {ReturnURL}, role: {Role}", provider, returnURL, role);
             var redirectURL = Url.Action("RegisterExternalUser", values: new { returnURL });
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectURL);
             properties.Items["role"] = role; // Set the role property
@@ -105,11 +108,13 @@ namespace WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> RegisterExternalUser(string? returnURL = null, string? remoteError = null)
         {
+            _logger.LogInformation("Handling external user registration. ReturnURL: {ReturnURL}, RemoteError: {RemoteError}", returnURL, remoteError);
             returnURL ??= Url.Content("~/");
             var message = "";
 
             if (remoteError != null)
             {
+                _logger.LogError("Error from external provider: {RemoteError}", remoteError);
                 message = $"Error from external provider: {remoteError}";
                 return RedirectToAction("Login", new { message });
             }
@@ -117,9 +122,12 @@ namespace WebUI.Controllers
             var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
+                _logger.LogError("Error loading external login information.");
                 message = "Error loading external login information.";
                 return RedirectToAction("Login", new { message });
             }
+
+            _logger.LogInformation("External login info retrieved. Provider: {Provider}, ProviderKey: {ProviderKey}", info.LoginProvider, info.ProviderKey);
 
             // Store external login claims in Session for display in views
             var claimsList = new List<Dictionary<string, string>>();
@@ -157,14 +165,26 @@ namespace WebUI.Controllers
             info.LoginProvider = loginProvider;
             if (externalLoginResult.Succeeded)
             {
+                _logger.LogInformation("External login succeeded for provider: {Provider}", info.LoginProvider);
                 return await HandleExistingUserLogin(info, returnURL);
             }
 
+            _logger.LogWarning("External login failed. Redirecting to user registration.");
             var role = info.AuthenticationProperties?.Items["role"];
+            _logger.LogInformation("Role retrieved from authentication properties: {Role}", role);
+
             if (string.IsNullOrWhiteSpace(role))
             {
+                _logger.LogError("Role is null or empty. Cannot assign role to user.");
                 message = "Error loading external login information. User role is null.";
                 //return RedirectToAction("Login", new { message });
+                return SignOutWithErrorMessage(message);
+            }
+
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                _logger.LogError("Role does not exist in the system: {Role}", role);
+                message = "Invalid role specified.";
                 return SignOutWithErrorMessage(message);
             }
 
@@ -212,6 +232,8 @@ namespace WebUI.Controllers
             }
 
             await userManager.AddToRoleAsync(user, role);
+            _logger.LogInformation("Role {Role} assigned to user {UserId}", role, user.Id);
+
             var addLoginResult = await userManager.AddLoginAsync(user, info);
 
             if (!addLoginResult.Succeeded)
@@ -229,9 +251,11 @@ namespace WebUI.Controllers
 
         private async Task<IActionResult> HandleExistingUserLogin(ExternalLoginInfo info, string returnURL)
         {
+            _logger.LogInformation("Handling existing user login. Provider: {Provider}, ReturnURL: {ReturnURL}", info.LoginProvider, returnURL);
             var loggedInUserEmail = info.Principal.FindFirstValue("preferred_username");
             if (loggedInUserEmail == null)
             {
+                _logger.LogError("Failed to retrieve preferred_username from external login info. Using emails field instead.");
                 loggedInUserEmail = info.Principal.FindFirstValue("emails");
             }
             var loggedInUser = await userManager.FindByNameAsync(loggedInUserEmail);
@@ -240,6 +264,7 @@ namespace WebUI.Controllers
 
             if (loggedInUser == null || !loggedInUser.IsActive)
             {
+                _logger.LogWarning("User not found or inactive. Email: {Email}", loggedInUserEmail);
                 var errorMessage = errorMessageForInactiveAndDistrictNull;
                 return SignOutWithErrorMessage(errorMessage);
             }

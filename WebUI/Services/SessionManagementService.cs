@@ -37,6 +37,10 @@ namespace WebUI.Services
 
         public string GetCurrentSessionId(HttpContext context)
         {
+            // Log all cookies for debugging
+            string allCookies = string.Join(", ", context.Request?.Cookies?.Select(c => $"{c.Key}={c.Value}") ?? Enumerable.Empty<string>());
+            _logger.LogDebug("DEBUG: All cookies: {Cookies}", allCookies);
+
             // Simply try to get the session ID from the cookie
             if (context.Request.Cookies.TryGetValue(SESSION_COOKIE_NAME, out string sessionId))
             {
