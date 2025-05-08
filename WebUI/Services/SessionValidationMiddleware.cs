@@ -7,46 +7,78 @@ namespace WebUI.Services
     public class SessionValidationMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<SessionValidationMiddleware> _logger;
 
-        public SessionValidationMiddleware(RequestDelegate next)
+        public SessionValidationMiddleware(RequestDelegate next, ILogger<SessionValidationMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context, ISessionManagementService sessionManagementService)
         {
-            // Skip validation for non-authenticated requests or authentication-related paths
-            if (!context.User.Identity.IsAuthenticated ||
-                context.Request.Path.StartsWithSegments("/Access") ||
-                context.Request.Path.StartsWithSegments("/Admin/Login") ||
-                context.Request.Path.StartsWithSegments("/SuperAdmin/Login") ||
-                context.Request.Path.StartsWithSegments("/Home/Error") ||
-                context.Request.Path.StartsWithSegments("/Home/Information") ||
-                context.Request.Path.StartsWithSegments("/static") ||
-                context.Request.Path.StartsWithSegments("/.well-known"))
+            _logger.LogInformation("SessionValidationMiddleware invoked for path: {Path}", context?.Request?.Path);
+
+            // Log user claims for debugging
+            var userClaims = string.Join(", ", context.User.Claims.Select(c => $"{c.Type}={c.Value}"));
+            _logger.LogDebug("DEBUG: User claims: {Claims}", userClaims);
+
+            // Log session details for debugging unauthenticated requests
+            var currentSessionId = sessionManagementService.GetCurrentSessionId(context);
+            _logger.LogDebug("DEBUG: Current session ID: {SessionId}", currentSessionId);
+
+            // Refined skip conditions
+            if (context.User?.Identity?.IsAuthenticated != true)
             {
+                _logger.LogInformation("Skipping validation: User is not authenticated. Path: {Path}", context.Request?.Path);
                 await _next(context);
                 return;
             }
 
-            // Get the current session ID from the cookie using the service
-            var currentSessionId = sessionManagementService.GetCurrentSessionId(context);
+            var skipPaths = new[]
+            {
+                "/Access",
+                "/Admin/Login",
+                "/SuperAdmin/Login",
+                "/Home/Error",
+                "/Home/Information",
+                "/static",
+                "/.well-known"
+            };
+
+            foreach (var skipPath in skipPaths)
+            {
+                if (context.Request.Path.StartsWithSegments(skipPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogInformation("Skipping validation: Path starts with {SkipPath}. Path: {Path}", skipPath, context.Request.Path);
+                    await _next(context);
+                    return;
+                }
+            }
+
+            // Debugging: Log session validation details
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Only validate if we have both a user ID and a session ID
-            // This allows initial logins where the session ID hasn't been set yet
+            _logger.LogInformation("Validating session. UserId: {UserId}, SessionId: {SessionId}, Path: {Path}", userId, currentSessionId, context.Request.Path);
+
             if (!string.IsNullOrEmpty(currentSessionId) && !string.IsNullOrEmpty(userId))
             {
                 var isValidSession = await sessionManagementService.ValidateSessionAsync(context.User, currentSessionId);
 
                 if (!isValidSession)
                 {
-                    // Session is invalid - user is logged in elsewhere
+                    _logger.LogWarning("Invalid session detected. UserId: {UserId}, SessionId: {SessionId}, Path: {Path}", userId, currentSessionId, context.Request.Path);
+                    _logger.LogDebug("DEBUG: Invalid session details. UserId: {UserId}, SessionId: {SessionId}", userId, currentSessionId);
                     await ForceLogout(context, "Your account has been logged in from another browser or device. Please log in again.");
                     return;
                 }
             }
+            else
+            {
+                _logger.LogWarning("Missing session or user ID. UserId: {UserId}, SessionId: {SessionId}, Path: {Path}", userId ?? "null", currentSessionId ?? "null", context.Request.Path);
+            }
 
+            _logger.LogInformation("Session validation passed for UserId: {UserId}, Path: {Path}", userId, context.Request.Path);
             await _next(context);
         }
 

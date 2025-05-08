@@ -36,6 +36,7 @@
             <li class="nav-item">
             <a asp-controller="Access" asp-action="ExternalLogin" asp-area="MicrosoftIdentity/Account/SignIn"
                asp-route-provider="AzureAdB2C"
+               asp-route-returnURL='@ViewData["ReturnUrl"]'
                asp-route-role="User"
                class="btn loginbuttonborder mx-1 accountbutton"
                title="Sign-In with any role or Sign-Up as a User using Google, Microsoft, or email accounts">
@@ -45,6 +46,7 @@
         <li class="nav-item">
             <a asp-controller="Access" asp-action="ExternalLogin" asp-area="MicrosoftIdentity/Account/SignIn"
                asp-route-provider="AzureAd"
+               asp-route-returnURL='@ViewData["ReturnUrl"]'
                asp-route-role="User"
                class="btn loginbuttonborder mx-1 accountbutton"
                title="Sign-In with any role or Sign-Up as a User using your organization's Office365 account">

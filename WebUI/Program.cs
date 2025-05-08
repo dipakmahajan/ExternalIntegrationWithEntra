@@ -114,7 +114,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 var authBuilder = builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = "AzureAd";// OpenIdConnectDefaults.AuthenticationScheme"";
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Use cookies for challenge instead of AzureAd
 
 });
 authBuilder.AddCookie(options =>
@@ -130,7 +130,21 @@ authBuilder.AddCookie(options =>
     // Add these settings:
     options.Cookie.SameSite = SameSiteMode.None; // Important for cross-site authentication
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Events = new CookieAuthenticationEvents
+    {
+        OnRedirectToLogin = context =>
+        {
+            if (!context.Request.Path.StartsWithSegments("/Access/ExternalLogin"))
+            {
+                var returnUrl = context.Request.Path + context.Request.QueryString;
+                var loginUrl = $"/Access/Login?returnUrl={Uri.EscapeDataString(returnUrl)}";
+                context.Response.Redirect(loginUrl);
+                return Task.CompletedTask;
+            }
 
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Add Azure AD (B2B) authentication
